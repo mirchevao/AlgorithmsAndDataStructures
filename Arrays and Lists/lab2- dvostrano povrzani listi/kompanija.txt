@@ -1,0 +1,197 @@
+/*
+Компанија Problem 2 (1 / 1) 
+Податоците за плати на вработените во една компанија привремено се чуваат во двострано поврзана листа. Во секој јазол од листата се чува единствен ID на вработениот и неговата плата. Потребно е да се отстранат сите вработени со помали плати од даден износ, а остатокот да се прикажат во опаѓачки редослед во однос на ID-то.
+
+Во првиот ред од влезот е даден бројот на вработени, потоа наизменично се дадени ID-та и платата за секој од вработените и во последниот ред е износот во однос на кој ќе се отстрануваат вработените. На излез се печати листа (ID, плата) во опаѓачки редослед според ID-то на секој од вработените.
+
+Доколку нема вработени со плата поголема од дадената да се испечати: nema
+
+Име на класата: DLLKompanija
+*/
+import java.util.*;
+ 
+ 
+class DLLNode<E> {
+    protected E ID,Plata;
+    protected DLLNode<E> succ,pred;
+    public DLLNode() {
+        this.ID=null;
+        this.Plata=null;
+        this.succ=null;
+        this.pred=null;
+    }
+    public DLLNode (E ID,E Plata, DLLNode<E> succ,DLLNode<E> pred) {
+        this.ID=ID;
+        this.Plata=Plata;
+        this.succ=succ;
+        this.pred=pred;
+    }
+    @Override
+    public String toString() {
+        return String.format("%s %s",ID.toString(),Plata.toString());
+    }
+    public void setData(E ID , E Plata) {
+        this.ID=ID;
+        this.Plata=Plata;
+    }
+ 
+ 
+};
+ 
+class DLL<E extends Comparable <E>> {
+    private DLLNode<E> first, last;
+    public DLL () {
+        //construct empty list
+        this.first=null;
+        this.last=null;
+    }
+    public void insertFirst(E o,E o1) {
+        DLLNode<E> ins = new DLLNode<E>(o,o1,null,first);
+        if(first == null) {
+            first=ins;
+        } else {
+            first.pred=ins;
+            first=ins;
+        }
+ 
+    }
+    public int getSize() {
+        int ret;
+        if (first != null) {
+            DLLNode<E> tmp = first;
+            ret = 1;
+            while (tmp.succ != null) {
+                tmp = tmp.succ;
+                ret++;
+            }
+            return ret;
+        } else
+            return 0;
+ 
+    }
+ 
+    public void insertLast(E o , E o1) {
+if (first != null) {
+            DLLNode<E> tmp = first;
+            while (tmp.succ != null)
+                tmp = tmp.succ;
+            DLLNode<E> ins = new DLLNode<E>(o,o1 , last,null);
+            tmp.succ = ins;
+        } else {
+            insertFirst(o,o1);
+        }
+ 
+    }
+    public DLLNode<E> getFirst() {
+        return first;
+    }
+    public DLLNode<E> getLast() {
+        return last;
+    }
+};
+public class DLLKompanija {
+    public static DLL<Integer> getGreaterThan(DLL<Integer> list ,int Greater) {
+        DLLNode<Integer> tmp = list.getFirst();
+        DLL<Integer> list1 = new DLL<Integer>();
+        while(tmp!=null) {
+            if(tmp.Plata>=Greater) {
+                list1.insertLast(tmp.ID, tmp.Plata);
+            }
+            tmp=tmp.succ;
+        }
+ 
+        return list1;
+    }
+//@SuppressWarnings("unused")
+    public static void sort(DLL<Integer> list) {
+        int i = 0;
+       if(list.getFirst()==null)
+           return;
+        DLLNode<Integer> currentNode = list.getFirst();
+        DLLNode<Integer> auxNode=new DLLNode<Integer>();
+        boolean foundChange =true;
+        while(foundChange) {
+            if(currentNode.succ==null)
+                    break;
+            foundChange = false;
+            for(i=0; i<list.getSize()-1; i++) {
+                if (currentNode.succ.ID>currentNode.ID) {
+                    auxNode.setData(currentNode.ID,currentNode.Plata);
+                    currentNode.setData(currentNode.succ.ID,currentNode.succ.Plata);
+                    currentNode.succ.setData(auxNode.ID,auxNode.Plata);
+                    foundChange = true;
+                }
+               
+                if(currentNode.succ!=null)
+                currentNode = currentNode.succ;
+            }
+ 
+        }
+    }
+   
+   /* public static void sort(DLL<Integer> list){
+       
+        for(int i =0;i<list.getSize()-1;i++){
+            DLLNode<Integer> temp= list.getFirst();
+            for(int j=0;j<list.getSize()-1-i;j++){
+                if(temp.ID < temp.succ.ID ){
+                    DLLNode<Integer>tmp=temp;
+                    temp=temp.succ;
+                    temp.succ=tmp;
+                }
+                temp=temp.succ;
+            }
+           
+        }
+       
+       
+    }
+    */
+    public static void print(DLL<Integer> list ) {
+        DLLNode<Integer> tmp=list.getFirst();
+        if (tmp==null){
+        System.out.print("nema");
+            return;
+        }
+        while(tmp!=null) {
+            System.out.print(tmp.ID+" "+tmp.Plata+"\n");
+           
+            //;
+            tmp=tmp.succ;
+        }
+ 
+    }
+ 
+ 
+    public static void main (String[] args) {
+ 
+        Scanner s = new Scanner(System.in);
+        DLL<Integer> list1 = new DLL<Integer>();
+        int n = s.nextInt();
+        int [] ID = new int [n];
+        int [] Plata = new int [n];
+        for(int i =0; i<n; i++) {
+            ID[i] = s.nextInt();
+            Plata[i]=s.nextInt();
+            list1.insertLast(ID[i],Plata[i]);
+        }
+        int plata;
+        plata=s.nextInt();
+        DLL<Integer> result = new DLL<Integer>();
+        result = getGreaterThan(list1,plata);
+        //print(result);
+       // System.out.println();
+        sort(result);
+        sort(result);
+         sort(result);
+         sort(result);
+         sort(result);
+         sort(result);
+        print(result);
+ 
+        s.close();
+    }
+ 
+ 
+ 
+};

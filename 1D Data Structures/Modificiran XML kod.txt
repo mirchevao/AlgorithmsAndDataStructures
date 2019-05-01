@@ -1,0 +1,48 @@
+/*
+Модифициран XML код Problem 2 (0 / 0) 
+Даден е некој модифициран XML код. Модифицираниот XML код ги користи симболите '[' и ']', за отварање и затворање на таг, соодветно, наместо стандардните '
+
+' и '>'. Треба да се провери дали сите тагови во кодот се правилно вгнездени (дали кодот е валиден) т.е. дали секој отворен таг има соодветен затворен таг со истото име на соодветното место во кодот. За поедноставување, дадено е дека секој отворен таг мора да има свој затворен таг и дека таговите немаат атрибути.
+
+На влез е даден бројот на редови во кодот и самиот XML со секој таг во посебен ред, а на излез треба да се испечати 1 или 0 за валиден или невалиден код, соодветно.
+
+Објаснување: Во модифицираниот XML код секој отворен таг е во облик [imeNaTag], а соодветниот затворен таг е во облик [/imeNaTag].
+*/
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.NoSuchElementException;
+import java.util.Stack;
+ 
+public class CheckXML {
+    private static int evaluate(String[] rows) {
+        Stack<String> s = new Stack<String>();
+        int valid = 0;
+       
+        for(String row : rows) {
+            if(row.charAt(0) == '[' && row.charAt(row.length()-1) == ']') {
+                if(row.charAt(1) != '/') s.push(row);
+                else if(s.pop().substring(1).compareTo(row.substring(2)) != 0) {
+                    return 0;
+                }
+            }
+        }
+        return 1;
+    }
+   
+    public static void main(String[] args) throws Exception{
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));  
+        String s = br.readLine();
+        int n = Integer.parseInt(s);
+        String [] redovi = new String[n];
+   
+        for(int i=0;i<n;i++)
+            redovi[i] = br.readLine();
+       
+        int valid;
+        valid = evaluate(redovi);
+ 
+        System.out.println(valid);
+       
+        br.close();
+    }
+}

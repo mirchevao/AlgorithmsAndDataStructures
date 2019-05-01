@@ -1,0 +1,106 @@
+/*
+Opened: 164 дена
+Постфикс нотација Problem 1 (1 / 1) 
+Да се напише алгоритам кој ќе врши евалуација на израз во постфикс нотација.
+
+На влез се чита низа од знаци за изразот (стринг), а на излез се печати вредноста на изразот по евалуацијата.
+
+Име на класата (Java): PostFixEvaluation*/
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.lang.reflect.Array;
+import java.util.NoSuchElementException;
+import java.util.ArrayList;
+ 
+// 8 9 * 4 3 - + 2 3 6 * + -        53
+//0 3 /                             0
+//28 72 * 13 + 20 67 * +            3369
+ 
+ 
+ 
+interface Stack<E>{
+    public E pop();
+    public void clear();
+    public E peek();
+    public boolean isEmpty();
+}
+ 
+class SLLNode<E>{
+    protected E data;
+    protected SLLNode succ;
+    SLLNode(){}
+    SLLNode(E data, SLLNode<E> succ){
+        this.data = data;
+        this.succ = succ;
+    }
+}
+ 
+class StackList<E> implements Stack{
+    SLLNode<E> top;
+    StackList(){
+        top = null;
+    }
+    public void push(E data){
+        SLLNode<E> ins = new SLLNode<>(data, top);
+        top = ins;
+    }
+    public E pop(){
+        if(top == null) System.out.print("Nema elementi vo stekot. ");
+        E ret = top.data;
+        top = top.succ;
+        return ret;
+    }
+ 
+    public void clear(){top = null;}
+ 
+    public E peek(){return top.data;}
+ 
+    public boolean isEmpty(){return (top==null);}
+ 
+}
+ 
+public class PostFixEvaluation {
+ 
+    public static int postfix(String [] s) throws Exception{
+        StackList<Integer> stek = new StackList<>();
+        for(String x : s){
+            if(Character.isDigit(x.charAt(0)))
+                stek.push(Integer.parseInt(x));
+ 
+            else if(x.charAt(0) == '+')
+                stek.push(stek.pop() + stek.pop());
+ 
+            else if(x.charAt(0) == '-'){
+                int vt = stek.pop();
+                int pr = stek.pop();
+                stek.push(pr - vt);
+            }
+ 
+            else if(x.charAt(0) == '/'){
+                int vt = stek.pop();
+                if(vt == 0) throw new Exception("Delenje so nula");
+                int pr = stek.pop();
+                stek.push(pr / vt);
+            }
+ 
+            else if(x.charAt(0) == '*')
+                stek.push(stek.pop() * stek.pop());
+        }
+        return stek.pop();
+    }
+ 
+    public static void main(String[] args) throws Exception{
+ 
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+ 
+        String expression = br.readLine();
+        char exp[] = expression.toCharArray();
+ 
+        String [] ex = expression.split(" ");
+        System.out.print(postfix(ex));
+       
+        br.close();
+ 
+    }
+ 
+}
